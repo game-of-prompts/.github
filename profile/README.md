@@ -8,7 +8,7 @@
 
 ## 1. FAQ (Frequently Asked Questions)
 
-### 1.1. General Concepts
+### 1.1. General FAQ
 
 *   **What is Game of Prompts?**
     It is a **bot competition audited by blockchain**.
@@ -19,41 +19,111 @@
 *   **What do I need to play?**
     You need an **Ergo Wallet** (with some ERG for fees) and a **Celaut Node**.
 
+*   **Do I need to reveal my real identity to participate?**
+    No. You can participate anonymously. You only need an Ergo wallet/address to pay participation fees (and transaction fees) and to receive prizes.
+
 *   **What is a Celaut Node and why do I need it?**
     Think of it as your secure "game console". It is the infrastructure that allows the **Game Service** (provided by the creator) and your **Solver Service** (your bot) to interact in an isolated and deterministic environment. It ensures that the game runs correctly and generates the necessary proofs (`commitmentC`, logs) without external interference.
 
-### 1.2. Security and Trust
-
 *   **How do I know the game is fair?**
     The game's rules and the hash of the secret `S` (`hashS`) are registered on the blockchain from the beginning. This ensures immutability: the creator cannot change the rules or the secret once the game has started.
+
+*   **What is the trust model of GoP (what do I have to trust)?**
+    GoP aims to be as trust-minimized as possible, but some trust assumptions remain. In general, to participate safely you must trust **either**:
+    * the creator, **or**
+    * at least **half of the nominated judges**.
+    That trust is grounded in judge/creator **reputation** and in the fact that their actions/claims can be **mechanically verified** by anyone (re-executed and checked), leaving an auditable trail.
+    Additionally, judges (and the creator too, if they provide their reputation token) can back their reputation by **burning tokens with economic value** as a public sacrifice. If they take an action that can be mechanically proven dishonest, they effectively destroy the value of that reputation, creating a strong economic disincentive to cheat. The web app surfaces these reputation signals (including value burned) and encourages users to verify actors locally.
+
+*   **How can I verify the `game-service` I am running is the authentic one (not modified)?**
+    Using your node, inspect the service and compare its **service ID** with the one published in the GoP web app:
+    * `nodo inspect <service-tag>`
+    In a Celaut node, services are referenced by a local **tag** (a human-friendly alias you can customize) and by their **service ID** (unique, content-hash based). The service ID is a cryptographic fingerprint (hash) of the full service contents. If the service ID matches what GoP shows for that game, you can be confident you are executing the same bytes (i.e., it has not been modified).
 
 *   **Can the Creator steal the funds?**
     No. The funds are locked in a **Smart Contract**, not in the Creator's wallet. The contract only releases funds according to the programmed rules (to the winner, judges, etc.).
     > **Note on Collusion:** While theoretically judges could collude with a creator to approve a fraudulent participation (created before the deadline), doing so would leave an immutable trace of fraud. Since verifying fraud is a deterministic and easy process, any observer could prove their dishonesty. If the judges' reputation (stake) is valuable, they have no economic incentive to destroy it for a one-time gain.
 
 *   **What happens if the Creator disappears?**
-    If the Creator does not reveal the secret `S` after the deadline, the game enters a "Stuck" state. After a **Grace Period**, players can trigger a **Refund Action** to recover their funds automatically.
+    If the Creator does not reveal the secret `S` after the `deadline`, the game enters a "Stuck" state. After a **Grace Period**, **any participant** can recover their funds: the smart contracts allow each Participation Box to be spent via a refund path so players get their money back automatically (without needing the creator).
 
-### 1.3. Judges and Penalties
+*   **What happens if the secret `S` is revealed too early?**
+    If `S` is revealed prematurely (while the game should still be ACTIVE), **anyone** (including the creator) can trigger the transition to **CANCELLED_DRAINING** (cancellation). Players can then refund their participations immediately, and the creator is punished by having their stake drained **in portions over time** (e.g., `1/5 every 30 blocks`). Because the punishment is executable by anyone and happens over time, the creator is not incentivized to reveal `S` early if they want to recover their full stake.
 
-*   **Who are the Judges and why should I trust them?**
-    Judges are entities nominated by the Creator, but they operate under a strict economic incentive structure. Their role is to audit the resolution phase.
+### 1.2. Participant FAQ
 
-*   **Why do Judges earn money if they invalidate a participation?**
-    If judges detect that the Game Service generated an invalid proof (fraud), they invalidate that candidate. The protocol then transfers the **Creator's commission** to the Judges. This incentivizes them to be vigilant and penalize the Creator for faulty or malicious services.
-    > **Important:** Even if the Creator is penalized, the game continues to find a valid winner among the honest participants.
+*   **Can I play without running my own Celaut Node?**
+    Yes. You can use someone else's node as long as you **trust** it. The trust implications are:
+    * The node could run a **modified** version of the game-service you requested (changing behavior off-chain).
+    * The node could **copy/steal your solver** (since you are sending it for execution) and try to participate with it.
+    Ideally, each user runs their own node. If your machine cannot execute a service due to limited resources, a Celaut node can still trade/coordinate execution with other nodes taking reputation into account, but the node you directly interact with should always be a trusted one.
+
+*   **Can I change my solver after registering it (Solver ID Box)?**
+    Each participation is bound to a specific solver (`solverId`). During the **Ceremony Phase** you may register more than one solver (multiple Solver ID Boxes), for example exporting and committing an early baseline solver and later committing an improved one before the ceremony window closes.
+    After the Ceremony Phase ends (seed fixed), you can choose which of your previously registered solvers to use for each participation, or participate with multiple solvers by publishing multiple Participation Boxes (paying the participation fee for each).
+    Once a Participation Box is published and paid, the solver associated with that participation cannot be changed.
+
+*   **Can I participate multiple times in the same game?**
+    Yes. There is no protocol-level restriction preventing multiple Participation Boxes from using the same `solverId`, nor preventing multiple participations from paying from (or being associated with) the same public key. Each Participation Box pays the participation fee independently.
+    Practical note: do not publicly share your solver-service before the game's `deadline`, because other players could download it and participate with it (their participation would be as valid as yours). After the `deadline`, if you are a winner candidate, judges will want to download your solver for verification; if it is unavailable, they can invalidate your win, so make sure your solver is downloadable (e.g., publish it or provide a public mirror link at that time).
+
+*   **When should I publish the download link for my solver?**
+    As a practical strategy, publish it **right after `deadline`**: before the deadline you risk copy-participation; after the deadline you must be downloadable to avoid invalidation as a winner candidate.
+    There is no strict on-chain "waiting time" defined for this in the document, but in practice judges should give the winner candidate time to publish the link and may wait until close to the end of the resolution/judging period. Do not rely on that: publishing shortly after `deadline` is the safest option.
+
+*   **Can I verify my `commitmentC` (and score) locally before publishing / before `S` is revealed?**
+    Not fully. Before the secret `S` is revealed, you cannot independently recompute and validate `commitmentC` end-to-end, so there is an inherent trust component in what the game-service returns off-chain.
+    The protocol mitigates this under the general trust model described above:
+    * When judges accept their nomination, they publish **test commitments** (using mock/test inputs) that can later be checked on-chain.
+    * When the creator attempts to reveal `S` and resolve the game, the contract verifies that all nominated judges accepted and that their test commitments are correct.
+    If the game-service is generating commitments incorrectly (e.g., not using the correct `blake2b256` scheme), the creator will be unable to resolve the game on-chain; in that case, participants wait the grace period and then recover their funds via the refund path.
 
 *   **Can I be penalized as a player?**
-    The system is designed to penalize the **Creator/Game Service**. A player could only successfully forge a participation if they knew the Creator's secret `S` in advance. Therefore, an invalid proof implies a leak of the secret or a malfunction of the Creator's service.
-    > While judges *could* theoretically invalidate an honest player, doing so without cause would destroy their reputation (as the proof is public and deterministic). Economically, it is not in their interest to attack honest players.
-
-### 1.4. Economy
+    The system is designed to penalize the **Creator/Game Service**, not players. In normal conditions, a player could only forge a valid-looking participation by either:
+    (1) being associated with the Creator (collusion), or
+    (2) compromising the Game Service / learning the secret `S` in advance.
+    Therefore, an invalid proof typically implies a leak of the secret or a malfunction/compromise of the Creator's service, which is what judges are meant to catch.
+    > While judges *could* theoretically invalidate an honest player, doing so without cause would destroy their reputation (as the verification is public and deterministic). Economically, it is not in their interest to attack honest players.
 
 *   **How is the winner calculated?**
     The winner is the participant with the highest **Time-Weighted Score**. This formula (`Score * (TimeWeight + RemainingTime)`) rewards players who submit their solutions earlier.
 
 *   **When do I receive my prize?**
     You receive the prize immediately upon the **End Game** action on the blockchain. The Smart Contract **obligates** the distribution of funds to all parties (Winner, Judges, Creator) simultaneously and atomically.
+
+### 1.3. Creator FAQ
+
+*   **What do I publish when creating a game, and what must remain secret?**
+    You publish the data required by the GoP web app form: game parameters and information, the game-service and paper references (hashes plus public links/mirrors so they can be fetched and verified), and `hashS` (the hash of your secret `S`).
+    You must keep the actual secret `S` private until the resolution phase (only `hashS` is public during ACTIVE).
+
+*   **How do I avoid making a game trivial / hardcodeable (CDE)?**
+    This depends on the game context and is part of the game designer's job. In general, the game-service should produce a large space of possible scenarios (high CDE). A good reference example is **Snake** (initial position and apple placements). A counterexample is a fixed **riddle**, which can be answered with a hardcoded solver once known.
+
+### 1.4. Judge FAQ
+
+*   **Who are the Judges and why should I trust them?**
+    Judges are entities nominated by the Creator, but they operate under a strict economic incentive structure. Their role is to **audit the Resolution phase by validating the Creator/Game Service** (i.e., that the service and its proofs allow deterministic verification once the secret `S` is revealed).
+    They **do not pick winners** and they **do not subjectively judge participants**: scoring is produced by the **Game Service**, and prize distribution is enforced by the **Smart Contract**.
+    Additionally, judge reputation is designed to be **publicly and mechanically verifiable**: anyone can re-run a judge's latest opinions/claims and check whether they are correct.
+    In practice, this means the web app can show a simple **local verification command** that users can execute to validate a judge's honesty for recent actions.
+
+*   **How do Judges build reputation / credibility?**
+    Judges can burn tokens with real economic value to signal integrity and long-term commitment. The GoP web app displays how much value each judge has burned and encourages users to independently verify judges locally (by executing the verification command mentioned above).
+
+*   **How long is the judging / resolution period?**
+    It is approximately **one day**: `JUDGE_PERIOD = 720` blocks. All protocol timings are defined in **block heights**, so real time is approximate (rule of thumb: ~2 minutes per block).
+
+*   **What if a judge invalidates in bad faith? How can the community prove they lied?**
+    By mechanically verifying the participation. For a claimed winner candidate, anyone can:
+    * Download the solver-service referenced by the participation.
+    * Re-execute it against the game-service using the competition `gameSeed`.
+    * Compare the reproduced logs with the participation's committed `hashLogs` (and/or the revealed logs, depending on the game).
+    If the solver is available and the replay reproduces the same logs (matching `hashLogs`), then an invalidation claiming "not verifiable" or "inconsistent" is demonstrably false, leaving an auditable trace that the judge acted dishonestly.
+
+*   **Why do Judges earn money if they invalidate a participation?**
+    If judges detect that the **Creator/Game Service** produced an invalid proof (fraud or malfunction), they invalidate that candidate as **evidence that the Game Service is faulty**. The protocol then transfers the **Creator's commission** to the Judges. This incentivizes them to be vigilant and penalize the Creator for faulty or malicious services.
+    > **Important:** Even if the Creator is penalized, the game continues to find a valid winner among the honest participants.
 
 -----
 
@@ -161,8 +231,11 @@ The process for a creator to design and publish a game on the GoP platform invol
 
       * The core of the design is a challenge that produces a **quantifiable score**. This means the result is not simply binary (solved/unsolved), but allows for ranking among different solvers. For example, in a maze game, the score could be inversely proportional to the time or number of steps, or proportional to how close it was to the exit.
       * In the current version, the focus is on games with **objective** scoring, such as puzzles, mazes, prediction games, classification tasks, etc., where evaluation can be algorithmic and deterministic. Specifically, two games have been implemented: [Snake](games/snake/README.md) and [Trading](games/trading/README.md)
+      * The game-service should be **deterministic** given the `gameSeed` and the solver: replays should reproduce the same state transitions, logs, and score.
 
     > ⚠️ **Variability:** It's crucial for a game to exhibit a high Scenario Dispersion Coefficient (CDE). If the Game Service always presents the same input or problem, players could simply "hardcode" an optimal solution. To avoid this, the game should generate variable scenarios in each execution; for example, if it's a story generation game, each game could ask "create a story about [random_topic]" where `random_topic` changes, ensuring the solver must be general and not tailored to a single case.
+    >
+    > There is no single universal threshold for "enough" CDE: it depends on the game's context and is part of the game designer's job. A good reference example is **Snake**, where variability comes from the initial snake position on the board and the position of each apple, yielding a very large space of possible scenarios. A counterexample would be a fixed **riddle** (adivinanza): once the answer is known, a solver can be hardcoded and the competition collapses.
 
 2.  **Secret Generation (`S`)**
 
@@ -173,9 +246,23 @@ The process for a creator to design and publish a game on the GoP platform invol
       * It's recommended that creators use a standard template for the Game Service. This template would facilitate integration with the GoP ecosystem and include common logic for:
           * Receiving a Solver Service as input.
           * Executing the solver within the game environment (i.e., requesting its execution from the node and having the node return the endpoint through which to use it).
+          * Communicating with the solver over its exposed port in a simple loop:
+              * The game-service sends the current game state.
+              * The solver returns an action.
+              * The game-service applies the action and updates/maintains game state coherently until the game ends.
           * Calculating the score.
           * Generating logs and their hash (`hashLogs`).
-          * Using the game's secret `S` to calculate `commitmentC` (which links `solverId`, score, `hashLogs`, and `S`).
+          * Using the game's secret `S` to calculate `commitmentC` for on-chain verification. In general, the commitment must bind all the fields the contract will later verify, notably:
+              * `solverId`
+              * `gameSeed`
+              * the chosen score value (the true score inside `scoreList`)
+              * `hashLogs`
+              * the participant script (`pBoxErgotree` / participant address script)
+              * the secret `S`
+          * Supporting verification workflows:
+              * Allow running/testing a solver without generating a commitment (useful for judges and local iteration).
+              * Allow loading a logs file and replaying/reproducing a match deterministically from those logs.
+          * Exposing a control surface (UI, API, or other interface) to run matches, inspect results, and drive replay/verification workflows.
       * The creator must integrate their game's specific logic and the secret `S` in the designated places within the template.
       * Finally, the game is packaged as a Celaut service and exported to a file such as (`<game_id>.celaut.bee`).
 
@@ -184,9 +271,11 @@ The process for a creator to design and publish a game on the GoP platform invol
 4.  **Publication on Ergo and GoP Web**
 
       * The creator must register their game on the GoP Web, providing:
-          * The Celaut service ID (`<game_id>.celaut.bee`).
+          * The Game Service reference (its Celaut service ID / hash) and download links (mirrors) for the `<game_id>.celaut.bee` bundle so it is accessible to players and judges.
+          * The game paper/spec (if provided): a **hash** of the paper and public links to fetch it.
+              * Rationale: large artifacts (service bundles, papers) may not fit on-chain; instead, the protocol/webapp relies on publishing their **hashes** plus links, so anyone can verify the fetched bytes match the published hash.
           * The **hash of the secret key (`hashS`)**. This hash is generated by the creator from their secret key `S` (a unique and random 256-bit value that they must generate and keep secure). It is `hashS` that is provided to the GoP Web for game registration. The original secret key `S` **is not shared with the GoP Web platform** nor made public to players at this stage, being reserved exclusively for the game resolution phase, where it is fundamental for validating scores.
-          * Alternative links (mirrors) for downloading the Game Service (in case their Celaut node doesn't have peers with that service available, as otherwise it will request it automatically).
+          * Alternative links (mirrors) for downloading the Game Service (in case a player's Celaut node doesn't have peers with that service available, as otherwise it will request it automatically).
           * An exhaustive description: game dynamics, how the score is calculated, time or resource limits, etc.
           * The cost per participation (`participationFee`) in ERG.
           * The deadline (`deadline`) for players to submit their participations.
@@ -210,6 +299,13 @@ For a player to participate in a GoP game, they follow these steps:
       * Based on their understanding of the game, the player designs and develops a Solver Service (`<solver_id>.celaut.bee`). This solver must be able to interact with the interface expected by the Game Service (implicitly or explicitly defined by the game creator).
       * The solver's objective is to implement logic that attempts to obtain the highest possible score according to the game's rules.
       * Once ready, the player packages their solver as a Celaut service and exports it to a file such as `<solver_id>.celaut.bee` or `<solver_tag>.celaut.bee`.
+      * **Reference Node commands (export/publish):**
+          * Export as `.celaut.bee` (compressed bundle): `nodo export my-solver Desktop/`
+          * Export as raw `.celaut` (uncompressed, hashable payload): `nodo export my-solver Desktop/ --raw`
+              * The `.celaut` file is the raw service representation; hashing it yields the `solverId` (service hash).
+          * Publish from your node (if a publish endpoint is configured): `nodo publish my-solver`
+              * If the `publish` module is not configured, the node will guide you through setup.
+          * Manual fallback: upload the produced `<solver_id>.celaut.bee` to a public mirror (Google Drive, etc.) and add the public link in the GoP web app, so others can download the solver for verification.
 
 3.  **Solver Registration (Pre-commitment)**
 
@@ -217,6 +313,7 @@ For a player to participate in a GoP game, they follow these steps:
       * The player must publish a **"Solver ID Box"** on the Ergo blockchain *before* the **Ceremony Phase** ends (i.e., before the game seed is fixed).
       * This box is simple: it just needs to contain the **Solver ID** (hash of the solver service) in register `R4`.
       * **Why?** This proves that the solver code existed and was committed to *before* the final randomness (seed) of the game was determined. When submitting the final participation, the protocol will verify that this box exists and was created within the valid timeframe (during the Ceremony Phase).
+      * **Multiple solvers:** A player may publish more than one Solver ID Box during the Ceremony Phase (e.g., iterate on the solver and commit a newer `solverId`). Later, each Participation Box is linked to exactly one of those solver IDs by referencing the corresponding Solver ID Box in the participation transaction.
 
 4.  **Game Execution (to obtain participation data)**
 
@@ -230,7 +327,7 @@ For a player to participate in a GoP game, they follow these steps:
 
     To ensure a participation is valid and eligible for resolution, the player must publish the `ParticipationBox` transaction, adhering to the following technical requirements enforced by the on-chain contract:
 
-    * **Solver Binding (Anti-Cheating):** The transaction must include the **Solver ID Box** (created in Step 3) as a **Data Input**. The contract validates that the `solverId` in the Participation Box (`R7`) matches the ID in the Data Input.
+    * **Solver Binding (Anti-Cheating):** The participation transaction must reference the **Solver ID Box** (created in Step 3). The contract validates that the `solverId` in the Participation Box (`R7`) matches the solver ID stored in that referenced box.
     * **Verification of Bot Integrity:** The system ensures the Solver ID Box uses the official script by verifying that its `propositionBytes` hash matches the predefined `FALSE_SCRIPT_HASH`.
     * **Preparation Time Window (Seed Margin):** To prevent players from tailoring a solver to the specific game seed, the contract enforces a "Seed Margin". The creation height of the Solver ID Box must be earlier than the `ceremonyDeadline` minus the `SEED_MARGIN`.
     * **Cryptographic Commitment (Score Validation):** The score is not just declared; it must be verified through a commitment in `R5`. The contract reconstructs the hash using: `pBoxSolverId ++ gameSeed ++ score ++ pBoxLogsHash ++ pBoxErgotree ++ revealedS` to ensure the score is legitimate and linked to the revealed secret.
@@ -238,6 +335,9 @@ For a player to participate in a GoP game, they follow these steps:
     * **Deadline:** The participation box must be created before the game's `deadline`.
     * **Participation Fee:** The box must contain the required `participationFee` in the correct token.
     * **Complexity Limit:** The number of scores submitted in `R9` cannot exceed `MAX_SCORE_LIST` to maintain computational efficiency during validation.
+    * **Immutability:** Once a Participation Box is published and paid, its associated `solverId` is fixed. To use a different solver, the player must publish a new Participation Box (and pay the fee again).
+    * **Multiple participations allowed:** A player may publish multiple Participation Boxes for the same game (same or different `solverId`s). Fees apply per Participation Box.
+    * **Solver sharing timing (practical):** Avoid sharing your solver-service publicly before `deadline` to prevent copy-participation. Publish it right after `deadline` (or as soon as you are a winner candidate) so judges can download it during resolution; if it is unavailable, they can invalidate your win.
 
 -----
 
@@ -282,19 +382,21 @@ Trust and clarity are fundamental in GoP. For the current version, the following
           * `hashLogs` (in register R8): Hash of the game logs.
           * `scoreList` (in register R9): A list of several scores, where one is the actual score obtained and the others act as decoys.
           * `commitmentC` (in register R5): A cryptographic commitment calculated by the game service using the secret `S` (not yet publicly revealed). Its format is:
-            `commitmentC = blake2b256(solverId ++ longToByteArray(TRUE_SCORE) ++ hashLogs ++ S_game)`
+            `commitmentC = blake2b256(solverId ++ gameSeed ++ longToByteArray(TRUE_SCORE) ++ hashLogs ++ pBoxErgotree ++ S_game)`
             The `TRUE_SCORE` is one of the scores present in the `scoreList`.
+            `pBoxErgotree` refers to the participant script (the ErgoTree of the Participation Box / participant address script) that the participation is bound to.
     2.  **Validation Process during Resolution (State 1) in `game.es`:**
           * The game creator reveals the secret `S` (in `OUTPUTS(1).R4` of the resolution transaction).
           * For each candidate `ParticipationBox` (included as an `INPUT` in the transaction), the `game.es` contract iterates through each `scoreAttempt` in the `pBoxScoreList` (extracted from `R9` of the `ParticipationBox`).
           * For each `scoreAttempt`, the contract calculates a `testCommitment` using the `pBoxSolverId` (from `R7`) and `pBoxHashLogs` (from `R8`) of that `ParticipationBox`, the current `scoreAttempt`, and the `S` revealed by the creator:
-            `testCommitment = blake2b256(pBoxSolverId ++ longToByteArray(scoreAttempt) ++ pBoxHashLogs ++ revealedS_fromOutput)`
+            `testCommitment = blake2b256(pBoxSolverId ++ gameSeed ++ longToByteArray(scoreAttempt) ++ pBoxHashLogs ++ pBoxErgotree ++ revealedS_fromOutput)`
           * If this `testCommitment` matches the `pBoxCommitment` (from `R5`) stored in the `ParticipationBox`, then `scoreAttempt` is considered the authentic and validated score (`actualScoreForThisPBox`) for that participation.
     3.  **Advantages and Assumptions of this Scheme:**
           * **The actual score is not publicly visible in the `ParticipationBox` before resolution.** This is achieved through `scoreList` and `commitmentC`.
           * **The player cannot change their score after participating** because the `ParticipationBox` is immutable once created on the blockchain.
           * **The creator cannot falsify a score for an existing `ParticipationBox` during on-chain resolution.** Once the creator reveals a single `S` in the resolution transaction, the `game.es` contract applies the validation logic (described above) deterministically to all included `ParticipationBox`es. The creator cannot instruct the contract to validate a score different from the one derived from `commitmentC` and the revealed `S`.
-          * **Trust in the initial generation of `commitmentC`:** The player trusts that the `game-service` (provided by the creator) has correctly generated the initial `commitmentC` based on their `TRUE_SCORE` and the same secret `S` that the creator will use in the resolution. If the `game-service` were malicious and generated an incorrect `commitmentC` (e.g., using a different `S`, or linking it to a score not obtained), the player might not be able to validate their real score, or an incorrect score might be validated. This `commitmentC` generation phase is off-chain. On-chain protection is activated once `commitmentC` is in the `ParticipationBox`.
+          * **Trust in the initial generation of `commitmentC`:** The `commitmentC` generation phase is off-chain, so before `S` is revealed the player cannot fully validate that the game-service linked the correct `TRUE_SCORE` to the correct logs and the correct `S`. This is covered by the general GoP trust model (creator or at least half of the nominated judges).
+            As a safeguard, judges publish **test commitments** when accepting nomination, and the game resolution transaction must prove judge acceptance and pass on-chain checks of those test commitments. If the game-service is producing commitments incorrectly (e.g., wrong hash scheme), the creator cannot successfully resolve on-chain; participants can then recover funds after the grace period via the refund path.
             This mechanism ensures that, given a `commitmentC` and a revealed `S`, score validation is objective and verifiable on-chain. The creator publishes the secret `S` to allow this verification and to be able to recover their `creatorStake` and commission.
 
   * **Public Validation of Resolution:**
@@ -385,7 +487,7 @@ The game is open. The secret `S` must remain private.
 *   **Phases (Off-chain/UI)**:
     *   **Ceremony Phase** (First ~720 blocks / 24h): The seed is renewable via `action3_add_randomness`. Intended for setup and initial testing.
     *   **Playing Phase**: The seed is immutable. Players compete.
-*   **Action: Stuck Game Rescue (Grace Period)**: If the game is abandoned (`HEIGHT > gameDeadline + GRACE_PERIOD`), players can spend their Participation Box to recover their funds entirely. `GRACE_PERIOD` is typically ~720 blocks (24h). This is the only legitimate exit from ACTIVE for a participation.
+*   **Action: Stuck Game Rescue (Grace Period)**: If the game is abandoned (`HEIGHT > gameDeadline + PARTICIPATION_GRACE_PERIOD`), players can spend their Participation Box to recover their funds entirely. `PARTICIPATION_GRACE_PERIOD` is typically `6480` blocks (~9 days). This is the only legitimate exit from ACTIVE for a participation.
 *   **Action: Batching**: Participations can be merged into **Participation Batch Boxes** to optimize the number of inputs during resolution. This is handled by `participation_batch.es`.
 
 ### 6.4. State 1 — RESOLUTION
@@ -395,12 +497,12 @@ The creator has revealed the secret `S`, moving the game to this state. Scores a
 *   **Action: Invalidation by Unavailable Robot**: Judges can also vote to invalidate a winner candidate if the **Solver Service** (robot) associated with the participation is **unavailable** (e.g., cannot be downloaded from the network). This enforces the requirement that winning strategies must be verifiable by the community.
 *   **Action: Include Omitted Participation**: If the creator failed to include a valid participation with a higher score in the resolution, any user can perform this action to force its inclusion and update the winner candidate, ensuring censorship resistance.
 *   **Action: Normal Game Finalization**: Once `HEIGHT >= resolutionDeadline`, the Main Game Box and valid Participation Boxes are spent together. Funds are distributed to the winner, the creator (commission), the developer (commission), and the judges.
-    *   **Judges Payment**: A portion of the prize pool is sent to a contract (`judges_paid.es`) which ensures that each judge receives their fair share based on their reputation tokens.
+    *   **Judges Payment**: A portion of the prize pool is sent to a contract (`judges_paid.es`) which ensures that each judge receives their fair share based on their reputation/integrity tokens.
 
 ### 6.5. State 2 — CANCELLED_DRAINING
 
 This state is reached if the secret `S` is revealed prematurely (while the game should be ACTIVE). The game is considered invalid.
-*   **Creator Punishment**: The creator's stake is drained progressively (**1/5 every 30 blocks**), creating economic friction and public visibility of the failure. Anyone can execute this drainage action.
+*   **Creator Punishment**: The creator's stake is drained progressively (**1/5 every 30 blocks**), creating economic friction and public visibility of the failure. Anyone can execute this drainage action, so the creator cannot assume they will capture all portions if they try to force an early reveal/cancellation.
 *   **Action: Cancellation Refund**: Players can immediately spend their Participation Boxes to get a full refund.
 
 ### 6.6. Game Box Registers
@@ -424,6 +526,22 @@ The Main Game Box uses specific registers to store critical parameters. Notably:
 More details on the specific implementation of the contracts can be found in [STATES.md](STATES.md).
 
 -----
+
+### 6.7. Protocol Constants (Block-Based Time)
+
+All times in GoP are defined in **blocks** (Ergo block time is ~2 minutes on average), so real-world durations are approximate.
+
+  * `JUDGE_PERIOD = 720` (approx. 1 day)
+  * `RESOLVER_OMISSION_NO_PENALTY_PERIOD = 5`
+  * `MAX_SCORE_LIST = 10`
+  * `STAKE_DENOMINATOR = 5`
+  * `COOLDOWN_IN_BLOCKS = 30`
+  * `END_GAME_AUTH_GRACE_PERIOD = 64800` (approx. 90 days)
+  * `PARTICIPATION_GRACE_PERIOD = 6480` (approx. 9 days)
+  * `PARTICIPATION_TIME_WINDOW = 2160` (approx. 3 days; if `future_participation.es` exists this could be `720`, approx. 1 day)
+  * `SEED_MARGIN = 20`
+  * `MIN_TIME_WEIGHT_MARGIN = 720` (approx. 24 hours)
+  * `COMMISSION_DENOMINATOR = 1000000`
 
 ## 8. Known Limitations and Trust Model
 
