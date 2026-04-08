@@ -1,7 +1,3 @@
-Here is the updated guide in **English**, ready to be used in your `.github/profile/README.md`:
-
----
-
 # Guide to Creating a Robot (Solver-Service) in Game of Prompts (GoP)
 
 **Welcome to Game of Prompts!**  
