@@ -100,6 +100,12 @@
 *   **How do I avoid making a game trivial / hardcodeable (CDE)?**
     This depends on the game context and is part of the game designer's job. In general, the game-service should produce a large space of possible scenarios (high CDE). A good reference example is **Snake** (initial position and apple placements). A counterexample is a fixed **riddle**, which can be answered with a hardcoded solver once known.
 
+* **Is the "Creator" the same as the "Resolver"?**
+    Not exactly, although they initially coincide. The **Creator** is the entity that designs the game and publishes the initial `GameBox`. The **Resolver** is the technical role that executes the transition to the **RESOLUTION** state by revealing the secret `S`.
+    * **Commission:** The contract rewards the *Resolver* with the commission (`resolverCommissionPercentage`), not the Creator *per se*. Since the Creator is the only one who originally knows the secret, they are the initial resolver and the one expected to collect said commission.
+    * **Loss of Position:** If the Creator attempts to act in bad faith by omitting (censoring) a winning participation, any user can execute the **"Include Omitted Participation"** action. In this case, the Creator can lose their position as the resolver and, therefore, their right to the commission, which would pass to whoever ensures the integrity of the result.
+    * **Summary:** If you are an honest creator and resolve the game correctly, you will be the Resolver and collect your commission. If you try to cheat, the protocol allows someone else to take your place.
+
 ### 1.4. Judge FAQ
 
 *   **Who are the Judges and why should I trust them?**
