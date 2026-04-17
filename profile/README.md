@@ -122,8 +122,8 @@
     If the solver is available and the replay reproduces the same logs (matching `hashLogs`), then an invalidation claiming "not verifiable" or "inconsistent" is demonstrably false, leaving an auditable trace that the judge acted dishonestly.
 
 *   **Why do Judges earn money if they invalidate a participation?**
-    If judges detect that the **Creator/Game Service** produced an invalid proof (fraud or malfunction), they invalidate that candidate as **evidence that the Game Service is faulty**. The protocol then transfers the **Creator's commission** to the Judges. This incentivizes them to be vigilant and penalize the Creator for faulty or malicious services.
-    > **Important:** Even if the Creator is penalized, the game continues to find a valid winner among the honest participants.
+    If judges detect that the **Creator/Game Service** produced an invalid proof (fraud or malfunction), they invalidate that candidate as **evidence that the Game Service is faulty**. The protocol uses the `creatorSlashRatio` parameter: on invalidation a fraction of the resolver's commission is slashed and redistributed to the judges (increasing the per-judge commission and reducing the resolver's commission accordingly). This incentivizes them to be vigilant and penalize faulty services.
+    > **Important:** Even if the Resolver (Creator at begining) is penalized, the game continues to find a valid winner among the honest participants.
 
 -----
 
@@ -280,6 +280,7 @@ The process for a creator to design and publish a game on the GoP platform invol
           * The cost per participation (`participationFee`) in ERG.
           * The deadline (`deadline`) for players to submit their participations.
           * The commission percentage (`commissionPercentage`) the creator will receive from the prize pool.
+          * The `creatorSlashRatio` parameter used to compute penalties applied on invalidation events.
           * Optionally, they can link to proof of their reputation or history.
       * The GoP Web acts as an interface for "Game Creation (Contract Deployment)" on the Ergo blockchain (see Section 6). Through it, the creator publishes the `GameBox` containing `hashS`, `deadline`, `participationFee`, `commissionPercentage`, `creatorStake`, `participatingJudges` (list of nominated judges), and the `gameNftId`, thus officializing the game on the platform.
 
@@ -522,8 +523,6 @@ The Main Game Box uses specific registers to store critical parameters. Notably:
     *   `[7] resolutionDeadline` (Only in Resolution State).
 
     > **Note on `createdAt`**: This value is critical for validating the **Solver ID Box**. The protocol checks that the Solver ID Box was created between `createdAt` and `createdAt + CEREMONY_WINDOW`.
-
-More details on the specific implementation of the contracts can be found in [STATES.md](STATES.md).
 
 -----
 
