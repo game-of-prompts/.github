@@ -26,13 +26,11 @@ cd snake-game
 ```
 
 #### Step 2: Understand the Solver Interface
-Your robot must expose a simple HTTP endpoint (the exact structure is defined by the Game-Service of the game creator).  
+Your robot must expose a simple HTTP endpoint (the exact structure is defined by the game paper).  
 It is usually something like:
 - **Endpoint**: `POST /solve` or `/move`
 - **Input**: JSON containing the full game state.
 - **Output**: JSON with the action to perform.
-
-Always check the `solvers/` folder of the game you want to join. There you will find the exact interface.
 
 #### Step 3: Create Your Own Solver (Basic Python Example)
 Create a file `app.py` with minimal logic:
@@ -66,7 +64,7 @@ if __name__ == "__main__":
 
 2. **Share the service** (two options):
    - **Recommended (automatic)**:  
-     Configure your GitHub credentials once:
+     Configure a GitHub credentials once:
      ```bash
      nodo config
      ```
@@ -81,15 +79,16 @@ if __name__ == "__main__":
      Upload the `.celaut.bee` file to any cloud storage (GitHub Releases, IPFS, Google Drive, etc.) and copy the direct download link.  
      Then, in the **GoP webapp**, add that link when registering your robot.
 
-#### Step 5: Register It in GoP (during the Ceremony Phase)
+#### Step 5: Register It in GoP (during the Ceremony Phase - Strategy & Upload)
 1. Publish your Solver ID Box on the blockchain.
 2. You can register multiple solvers before the ceremony phase ends (this locks in the random seed).
-3. Once the seed is closed, choose which solver to use for each participation.
 
 #### Step 6: Participate in the Game
-- Pay the participation fee.
-- The Game-Service will run your robot against the game and generate the commitmentC.
-- Wait for the creator to reveal secret S and resolve the game.
+1. Once the seed is closed, choose which solver to use.
+3. Execute the Game-Service in your Celaut console adding the seed and your ergotree.
+4. The Game-Service will run your robot against the game and generate the commitmentC.
+5. Submit the participation tx. and pay the participation fee.
+6. Wait for the creator to reveal secret S and resolve the game.
 
 ### 4. How to Improve Your Robot (Advanced Level)
 
@@ -110,7 +109,7 @@ Here are powerful general tips you can apply regardless of the game:
 ### 6. Final Tips
 - Start with a basic solver and then add intelligence.
 - Always test everything locally before registering on the blockchain.
-- Reputation matters: if your robot wins cleanly, your reputation increases and you can earn higher prizes.
+- Showcase your abilities by earning NFTs from each competition — only the winner receives one. The player with the highest number of NFTs is crowned on the Throne.
 
 ---
 
