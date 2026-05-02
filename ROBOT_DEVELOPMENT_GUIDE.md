@@ -14,8 +14,7 @@ This guide is designed for beginners and is **100% general**, valid for any type
 - **Celaut Node** (your secure “game console”).  
   Official installation: [https://github.com/celaut-project/nodo?tab=readme-ov-file#installation](https://github.com/celaut-project/nodo?tab=readme-ov-file#installation)
 - **Ergo Wallet** with some ERG (for fees and participation).
-- Basic knowledge of Python (or your preferred language).
-- Docker or the environment used by Celaut to package services.
+- Basic knowledge of Python (or your preferred language) (or use your favorite AI assistant). 
 
 ### 3. Steps to Create Your First Robot
 
