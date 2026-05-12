@@ -5,7 +5,7 @@
 > There are no central servers deciding for you.
 > **Your console is the only possible truth.**
 
----
+
 
 # 1. 🤖 YOUR GLADIATOR (Anatomy of a Solver)
 
@@ -22,7 +22,7 @@ It receives the chaotic state of the world and returns a precise command.
 
 If your logic is solid, you win. If it fails, you lose resources. No one will warn you.
 
----
+
 
 # 2. 🏛️ THE RITUAL (No Central Judges)
 
@@ -36,14 +36,14 @@ Forget traditional servers. In GoP, **the network is your judge**.
 
 📌 **Critical difference**: The game does not run in the cloud. It runs on **your machine**, under **your record**, under **your responsibility**.
 
----
+
 
 # 3. 🛠️ YOUR ARSENAL (Requirements)
 
 You only need the basics to control your own destiny.
 
 | Item                  | Purpose                                         |
-| :-------------------- | :---------------------------------------------- |
+| :-- | :- |
 | **Celaut Node**       | Your command center. Where things happen.       |
 | **Ergo Wallet**       | Your digital signature. You pay ERG gas to act. |
 | **Python / Rust**     | Your language of combat.                        |
@@ -51,7 +51,7 @@ You only need the basics to control your own destiny.
 
 👉 **[Install your Node here](https://github.com/celaut-project/nodo?tab=readme-ov-file#installation)** (Your first tactical move).
 
----
+
 
 # 4. 🧱 THE BLUEPRINT (Minimal Structure)
 
@@ -78,7 +78,7 @@ app.run(host="0.0.0.0", port=8080)
 
 📌 The exact endpoint depends on the **game paper**. Read it like a tactical map.
 
----
+
 
 # 5. 🥊 THE GYM (Simulation)
 
@@ -90,7 +90,7 @@ Use your Node to emulate the entire environment.
 
 👉 **This is not optional testing.** When you reach production, you will do exactly this—but with no margin for error. Train until you master the flow.
 
----
+
 
 # 6. 📦 SEALING THE WEAPON (`nodo pack`)
 
@@ -106,7 +106,7 @@ Result: `.celaut.bee`
 From this file onward, your code is frozen.
 If you discover a bug after packaging... you must create a new package and register it (if the ceremony period allows it).
 
----
+
 
 # 7. 🚀 ENTERING THE ARENA (Publishing)
 
@@ -124,7 +124,7 @@ nodo export my-epic-solver
 
 (You upload the `.celaut.bee` and register its hash on the GoP Web).
 
----
+
 
 # 8. 🤝 THE OATH (Chain Registration)
 
@@ -137,7 +137,7 @@ You publish your **Solver ID Box** (hash of your `.bee` file) on Ergo.
 > This removes any advantage of knowing the outcome in advance.
 > **Full transparency.**
 
----
+
 
 # 9. ⏳ THE CEREMONY (Silence before the storm)
 
@@ -151,7 +151,7 @@ High-tension phase.
 Participate in the seed lottery or wait for the precise moment to lock it.
 Once **LOCKED**, the seed can no longer change. The war begins.
 
----
+
 
 # 10. 🩸 EXECUTION (Everything happens on your Node)
 
@@ -168,7 +168,7 @@ Once **LOCKED**, the seed can no longer change. The war begins.
 
 Each participant runs their own instance in parallel. Decentralization ensures there are no hidden server-side cheats.
 
----
+
 
 # 11. 📜 THE ARENA RULES
 
@@ -195,7 +195,7 @@ Classic algorithms, Machine Learning, local LLMs...
 What matters is not complexity, but **deterministic efficiency**.
 If your AI takes too long to produce a Commitment, you lose.
 
----
+
 
 # 12. 🏆 THE LOOT
 
@@ -203,7 +203,7 @@ If your AI takes too long to produce a Commitment, you lose.
 * 💸 **ERG** (monetary rewards depending on game rules).
 * 🧠 **Data** (understanding how others think).
 
----
+
 
 # 13. ⚡ HERO’S PATH (TL;DR)
 
@@ -225,7 +225,7 @@ If your AI takes too long to produce a Commitment, you lose.
 8. REWARD (Claim)
 ```
 
----
+
 
 # 🎯 FINAL VETERAN ADVICE
 
