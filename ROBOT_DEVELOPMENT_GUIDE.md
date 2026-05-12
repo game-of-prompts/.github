@@ -1,116 +1,242 @@
-# Guide to Creating a Robot (Solver-Service) in Game of Prompts (GoP)
+# ⚔️ SURVIVAL MANUAL: FORGE YOUR FIRST SOLVER
 
-**Welcome to Game of Prompts!**  
-This guide explains step by step how to create your own **robot** (called a *Solver-Service*). In GoP, a robot is not a physical device — it is an intelligent service that competes in games created by other participants. Everything runs in an auditable way on the Ergo blockchain using the Celaut paradigm.
+> **Welcome to Game of Prompts.**
+> Here you don’t write code. **You forge weapons.**
+> There are no central servers deciding for you.
+> **Your console is the only possible truth.**
 
-This guide is designed for beginners and is **100% general**, valid for any type of game (Snake, Trading, Chess, or any game you can imagine).
+---
 
-### 1. What is a Robot in GoP?
-- A **Solver-Service** is a program that receives the current game state and returns the best possible action.
-- The *Game-Service* (created by another user) executes it in an isolated and secure environment.
-- Everything is recorded on the Ergo blockchain with cryptographic proofs (commitmentC) so no one can cheat.
+# 1. 🤖 YOUR GLADIATOR (Anatomy of a Solver)
 
-### 2. Prerequisites
-- **Celaut Node** (your secure “game console”).  
-  Official installation: [https://github.com/celaut-project/nodo?tab=readme-ov-file#installation](https://github.com/celaut-project/nodo?tab=readme-ov-file#installation)
-- **Ergo Wallet** with some ERG (for fees and participation).
-- Basic knowledge of Python (or your preferred language) (or use your favorite AI assistant). 
+A Solver is not a function. It is a theory of victory encapsulated.
+It receives the chaotic state of the world and returns a precise command.
 
-### 3. Steps to Create Your First Robot
+**The sacred formula**:
 
-#### Step 1: Choose or clone an example
-You can start from scratch or use an existing example (like Snake):
-```bash
-git clone https://github.com/game-of-prompts/snake-game.git
-cd snake-game
-```
+> **Input (Chaos) → Your Logic → Output (Order)**
 
-#### Step 2: Understand the Solver Interface
-Your robot must expose a simple HTTP endpoint (the exact structure is defined by the game paper).  
-It is usually something like:
-- **Endpoint**: `POST /solve` or `/move`
-- **Input**: JSON containing the full game state.
-- **Output**: JSON with the action to perform.
+* **Chaos**: Board, cards, encrypted data.
+* **Your Logic**: Algorithm, Minimax, Neural Network, encoded intuition.
+* **Order**: `"UP"`, `"FOLD"`, `"X=10"`.
 
-#### Step 3: Create Your Own Solver (Basic Python Example)
-Create a file `app.py` with minimal logic:
+If your logic is solid, you win. If it fails, you lose resources. No one will warn you.
+
+---
+
+# 2. 🏛️ THE RITUAL (No Central Judges)
+
+Forget traditional servers. In GoP, **the network is your judge**.
+
+1. You **register your ID** on the blockchain (your public identity).
+2. The **Seed is fixed** (the seed of destiny is sealed in a ceremony).
+3. **YOU execute the Game-Service** on your own Node with your Solver.
+4. You generate a **Commitment** (a signed proof of what happened).
+5. You publish that commitment on-chain for validation.
+
+📌 **Critical difference**: The game does not run in the cloud. It runs on **your machine**, under **your record**, under **your responsibility**.
+
+---
+
+# 3. 🛠️ YOUR ARSENAL (Requirements)
+
+You only need the basics to control your own destiny.
+
+| Item                  | Purpose                                         |
+| :-------------------- | :---------------------------------------------- |
+| **Celaut Node**       | Your command center. Where things happen.       |
+| **Ergo Wallet**       | Your digital signature. You pay ERG gas to act. |
+| **Python / Rust**     | Your language of combat.                        |
+| **Stable Connection** | Your frontline link.                            |
+
+👉 **[Install your Node here](https://github.com/celaut-project/nodo?tab=readme-ov-file#installation)** (Your first tactical move).
+
+---
+
+# 4. 🧱 THE BLUEPRINT (Minimal Structure)
+
+Your solver exposes a simple HTTP endpoint. It receives orders, returns actions.
 
 ```python
+# Your local weapon.
 from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-@app.post("/solve")   # ← change the endpoint if the game requires it
+@app.post("/solve")
 def solve():
-    data = request.get_json()
-    # Your intelligence goes here: receive state and return action
-    action = your_intelligent_logic(data)
-    return jsonify({"action": action})
+    state = request.get_json()  
+    action = decide(state)       
+    return jsonify({"action": action}) 
 
-def your_intelligent_logic(state):
-    # Implement your algorithm here
-    return "best_possible_action"
+def decide(state):
+    # HERE YOU DECIDE YOUR DESTINY
+    return "UP" 
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8080)
+app.run(host="0.0.0.0", port=8080)
 ```
 
-#### Step 4: Package and Share Your Service
-1. **Package the service**:
-   ```bash
-   nodo pack ./path/to/your-project
-   ```
-   This automatically generates the `.celaut.bee` file ready to run.
-
-2. **Share the service** (two options):
-   - **Recommended (automatic)**:  
-     Configure a GitHub credentials once:
-     ```bash
-     nodo config
-     ```
-     Then publish directly:
-     ```bash
-     nodo publish my-service
-     ```
-   - **Manual option**:  
-     ```bash
-     nodo export my-service
-     ```
-     Upload the `.celaut.bee` file to any cloud storage (GitHub Releases, IPFS, Google Drive, etc.) and copy the direct download link.  
-     Then, in the **GoP webapp**, add that link when registering your robot.
-
-#### Step 5: Register It in GoP (during the Ceremony Phase - Strategy & Upload)
-1. Publish your Solver ID Box on the blockchain.
-2. You can register multiple solvers before the ceremony phase ends (this locks in the random seed).
-
-#### Step 6: Participate in the Game
-1. Once the seed is closed, choose which solver to use.
-3. Execute the Game-Service in your Celaut console adding the seed and your ergotree.
-4. The Game-Service will run your robot against the game and generate the commitmentC.
-5. Submit the participation tx. and pay the participation fee.
-6. Wait for the creator to reveal secret S and resolve the game.
-
-### 4. How to Improve Your Robot (Advanced Level)
-
-Here are powerful general tips you can apply regardless of the game:
-
-- **Classic Algorithms**: A*, Minimax, Monte Carlo Tree Search, depth-first search, etc.
-- **Artificial Intelligence / LLM**: Integrate Ollama or any local model inside the Celaut container for advanced reasoning.
-- **Reinforcement Learning**: Train an agent (PPO, DQN) that learns from the game itself.
-- **Evolutionary Strategies**: Generate a population of solvers and evolve the best ones (genetic algorithms).
-- **Massive Local Testing**: Run the Game-Service in debug mode (if possible) and simulate thousands of games to measure win-rate.
-- **Security**: Never reveal your solver before the deadline (prevents others from copying it) - you only need to share the solver id!
-
-### 5. Useful Resources
-- **Celaut Node Documentation**: [https://github.com/celaut-project/nodo](https://github.com/celaut-project/nodo)
-- **Snake Example Repository**: [github.com/game-of-prompts/snake-game](https://github.com/game-of-prompts/snake-game)
-- **Official GoP Website**: [game-of-prompts.github.io](https://game-of-prompts.github.io)
-
-### 6. Final Tips
-- Start with a basic solver and then add intelligence.
-- Always test everything locally before registering on the blockchain.
-- Showcase your abilities by earning NFTs from each competition — only the winner receives one. The player with the highest number of NFTs is crowned on the Throne.
+📌 The exact endpoint depends on the **game paper**. Read it like a tactical map.
 
 ---
 
-**Ready!** You can now create your first robot and compete in **any** game on Game of Prompts.
+# 5. 🥊 THE GYM (Simulation)
+
+Use your Node to emulate the entire environment.
+
+* You spin up the Game-Service locally.
+* You connect your Solver.
+* You observe the full flow before spending real money.
+
+👉 **This is not optional testing.** When you reach production, you will do exactly this—but with no margin for error. Train until you master the flow.
+
+---
+
+# 6. 📦 SEALING THE WEAPON (`nodo pack`)
+
+When your logic is flawless:
+
+```bash
+nodo pack .
+```
+
+Result: `.celaut.bee`
+
+**This is immutable.**
+From this file onward, your code is frozen.
+If you discover a bug after packaging... you must create a new package and register it (if the ceremony period allows it).
+
+---
+
+# 7. 🚀 ENTERING THE ARENA (Publishing)
+
+### Option A: Direct
+
+```bash
+nodo publish my-epic-solver
+```
+
+### Option B: Physical file
+
+```bash
+nodo export my-epic-solver
+```
+
+(You upload the `.celaut.bee` and register its hash on the GoP Web).
+
+---
+
+# 8. 🤝 THE OATH (Chain Registration)
+
+Here you commit before everyone.
+
+You publish your **Solver ID Box** (hash of your `.bee` file) on Ergo.
+
+> 🛑 **POINT OF NO RETURN.**
+> The blockchain certifies your strategy existed **before** knowing the final Seed.
+> This removes any advantage of knowing the outcome in advance.
+> **Full transparency.**
+
+---
+
+# 9. ⏳ THE CEREMONY (Silence before the storm)
+
+High-tension phase.
+
+* The **Seed floats** across the network.
+* Anyone can try to change it (paying gas), until someone locks it definitively.
+* It lasts days or weeks.
+
+**Your mission**:
+Participate in the seed lottery or wait for the precise moment to lock it.
+Once **LOCKED**, the seed can no longer change. The war begins.
+
+---
+
+# 10. 🩸 EXECUTION (Everything happens on your Node)
+
+**Attention!** No one is running your games for you.
+
+1. You receive confirmation that the Seed is Locked.
+2. You open your **Celaut Node Console**.
+3. You manually/computationally execute the **Game-Service + Your Solver**.
+4. The system generates moves step by step locally.
+5. You obtain the **Commitment** (cryptographic evidence).
+6. You send it to the network.
+
+> "I was there, I saw, and I computed. Here is the proof."
+
+Each participant runs their own instance in parallel. Decentralization ensures there are no hidden server-side cheats.
+
+---
+
+# 11. 📜 THE ARENA RULES
+
+### ⏱ Local Latency
+
+Since you run on your machine, speed depends on your hardware. Optimize your code. Slow computation can invalidate your turn.
+
+### 🔐 The Cage (Sandbox)
+
+Even though it runs on your machine, the environment is isolated. You cannot read external files or connect to the internet during valid execution.
+
+### 🤝 Ties
+
+If two bots produce valid results, the winner is the one who **first registered** a valid submission on-chain. Submission time is critical.
+
+### 🔁 Updates
+
+❌ You cannot edit code during active competition.
+✅ You can upload new versions **until the Seed phase ends**.
+
+### 🧠 Complexity
+
+Classic algorithms, Machine Learning, local LLMs...
+What matters is not complexity, but **deterministic efficiency**.
+If your AI takes too long to produce a Commitment, you lose.
+
+---
+
+# 12. 🏆 THE LOOT
+
+* 👑 **Champion NFT** (on-chain visible badge).
+* 💸 **ERG** (monetary rewards depending on game rules).
+* 🧠 **Data** (understanding how others think).
+
+---
+
+# 13. ⚡ HERO’S PATH (TL;DR)
+
+```
+1. FORGE (Code solver)
+   ↓
+2. GYM (Local Node testing)
+   ↓
+3. SEAL (Package .celaut.bee)
+   ↓
+4. OATH (Register hash on blockchain)
+   ↓
+5. CEREMONY (Wait/participate in seed closure)
+   ↓
+6. BATTLE (Run Game+Solver on YOUR NODES -> Commitment)
+   ↓
+7. PROOF (Peer/judge validation)
+   ↓
+8. REWARD (Claim)
+```
+
+---
+
+# 🎯 FINAL VETERAN ADVICE
+
+The main risk is not that your algorithm is bad.
+The risk is assuming the system will do anything for you.
+
+**Everything happens in your console.**
+If your Node fails, you fail.
+If your CPU is slow, you are slow.
+
+Master your infrastructure as much as your code.
+Because in Game of Prompts, **you are the server.**
+
+**Now go. And execute.**
