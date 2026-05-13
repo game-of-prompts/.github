@@ -52,8 +52,20 @@ You only need the basics to control your own destiny.
 👉 **[Install your Node here](https://github.com/celaut-project/nodo?tab=readme-ov-file#installation)** (Your first tactical move).
 
 
+# 4. 📥 ACQUIRE THE GAME-SERVICE
 
-# 4. 🧱 THE BLUEPRINT (Minimal Structure)
+Before training or competing, you need the actual Game-Service package.
+
+Download it directly into your Node with:
+
+```bash
+nodo download {GAME_SERVICE_URL}
+```
+
+This retrieves the official game package so you can execute it locally alongside your Solver.
+
+
+# 5. 🧱 THE BLUEPRINT (Minimal Structure)
 
 Your solver exposes a simple HTTP endpoint. It receives orders, returns actions.
 
@@ -80,7 +92,7 @@ app.run(host="0.0.0.0", port=8080)
 
 
 
-# 5. 🥊 THE GYM (Simulation)
+# 6. 🥊 THE GYM (Simulation)
 
 Use your Node to emulate the entire environment.
 
@@ -92,7 +104,7 @@ Use your Node to emulate the entire environment.
 
 
 
-# 6. 📦 SEALING THE WEAPON (`nodo pack`)
+# 7. 📦 SEALING THE WEAPON (`nodo pack`)
 
 When your logic is flawless:
 
@@ -108,7 +120,7 @@ If you discover a bug after packaging... you must create a new package and regis
 
 
 
-# 7. 🚀 ENTERING THE ARENA (Publishing)
+# 8. 🚀 ENTERING THE ARENA (Publishing)
 
 ### Option A: Direct
 
@@ -126,7 +138,7 @@ nodo export my-epic-solver
 
 
 
-# 8. 🤝 THE OATH (Chain Registration)
+# 9. 🤝 THE OATH (Chain Registration)
 
 Here you commit before everyone.
 
@@ -139,7 +151,7 @@ You publish your **Solver ID Box** (hash of your `.bee` file) on Ergo.
 
 
 
-# 9. ⏳ THE CEREMONY (Silence before the storm)
+# 10. ⏳ THE CEREMONY (Silence before the storm)
 
 High-tension phase.
 
@@ -153,7 +165,7 @@ Once **LOCKED**, the seed can no longer change. The war begins.
 
 
 
-# 10. 🩸 EXECUTION (Everything happens on your Node)
+# 11. 🩸 EXECUTION (Everything happens on your Node)
 
 **Attention!** No one is running your games for you.
 
@@ -170,7 +182,7 @@ Each participant runs their own instance in parallel. Decentralization ensures t
 
 
 
-# 11. 📜 THE ARENA RULES
+# 12. 📜 THE ARENA RULES
 
 ### ⏱ Local Latency
 
@@ -197,7 +209,7 @@ If your AI takes too long to produce a Commitment, you lose.
 
 
 
-# 12. 🏆 THE LOOT
+# 13. 🏆 THE LOOT
 
 * 👑 **Champion NFT** (on-chain visible badge).
 * 💸 **ERG** (monetary rewards depending on game rules).
@@ -205,7 +217,7 @@ If your AI takes too long to produce a Commitment, you lose.
 
 
 
-# 13. ⚡ HERO’S PATH (TL;DR)
+# 14. ⚡ HERO’S PATH (TL;DR)
 
 ```
 1. FORGE (Code solver)
