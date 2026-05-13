@@ -62,6 +62,7 @@ Download it directly into your Node with:
 nodo download {GAME_SERVICE_URL}
 ```
 
+
 This retrieves the official game package so you can execute it locally alongside your Solver.
 
 
