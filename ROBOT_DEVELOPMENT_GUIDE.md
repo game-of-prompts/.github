@@ -119,6 +119,8 @@ Result: `.celaut.bee`
 From this file onward, your code is frozen.
 If you discover a bug after packaging... you must create a new package and register it (if the ceremony period allows it).
 
+> Windows users: never use C:\... inside Nodo. Use /mnt/c/... instead. Your .celaut.bee appears there after nodo pack.  Example: "nodo pack /mnt/c/Users/alice/Desktop/my-solver-project".
+
 
 
 # 8. 🚀 ENTERING THE ARENA (Publishing)
@@ -172,8 +174,8 @@ Once **LOCKED**, the seed can no longer change. The war begins.
 
 1. You receive confirmation that the Seed is Locked.
 2. You open your **Celaut Node Console**.
-3. You manually/computationally execute the **Game-Service + Your Solver**.
-4. The system generates moves step by step locally.
+3. You manually/computationally execute the **Game-Service** and uploads your-solver.celaut.bee to it.
+4. The system generates moves step by step.
 5. You obtain the **Commitment** (cryptographic evidence).
 6. You send it to the network.
 
@@ -206,15 +208,15 @@ If two bots produce valid results, the winner is the one who **first registered*
 
 Classic algorithms, Machine Learning, local LLMs...
 What matters is not complexity, but **deterministic efficiency**.
-If your AI takes too long to produce a Commitment, you lose.
+If your AI takes too long to decide a movement, you lose.
 
 
 
 # 13. 🏆 THE LOOT
 
 * 👑 **Champion NFT** (on-chain visible badge).
-* 💸 **ERG** (monetary rewards depending on game rules).
-* 🧠 **Data** (understanding how others think).
+* 💸 **USD** (or any token: monetary rewards depending on game rules).
+* 🏅 Reputation (your victories become visible across the network).
 
 
 
@@ -240,16 +242,21 @@ If your AI takes too long to produce a Commitment, you lose.
 
 
 
-# 🎯 FINAL VETERAN ADVICE
+# 🎯 FINAL ADVICE
 
-The main risk is not that your algorithm is bad.
-The risk is assuming the system will do anything for you.
+A clever idea is not enough.
 
-**Everything happens in your console.**
-If your Node fails, you fail.
-If your CPU is slow, you are slow.
+Your Solver must survive **every possible scenario** the game can produce.
 
-Master your infrastructure as much as your code.
-Because in Game of Prompts, **you are the server.**
+Edge cases.
+Unexpected states.
+Bad positions.
+Time pressure.
+Deterministic execution.
 
-**Now go. And execute.**
+The winners are not the most complex Solvers.
+The winners are the ones that keep producing valid decisions no matter what happens.
+
+In Game of Prompts, reliability is power.
+
+**Forge carefully. Then execute without fear.**
