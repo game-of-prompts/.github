@@ -84,13 +84,21 @@ The minimum infrastructure required for participation is the following:
 | Python / Rust / Other Runtime | Solver implementation                          |
 | Local Compute Environment     | Deterministic execution                        |
 
+You can install the Celaut Node here:
+[Celaut Node Installation Guide](https://github.com/celaut-project/nodo?utm_source=chatgpt.com#installation)
+
 A permanent high-bandwidth connection is not required.
+
+<details> <summary><strong>Why is network connectivity required?</strong></summary>
 
 Network connectivity is only necessary for:
 
-1. Downloading the Game-Service
-2. Publishing the Solver ID transaction
-3. Publishing the final participation transaction
+- Downloading the Game-Service
+- Publishing the Solver ID transaction
+- Publishing the final participation transaction
+</details>
+
+
 
 ## 6. Packaging Requirements
 
