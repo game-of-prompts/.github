@@ -99,8 +99,9 @@ Network connectivity is only necessary for:
 </details>
 
 
-
 ## 6. Packaging Requirements
+
+> The packer prepares your Solver-Service project so it can be distributed and executed by the Celaut Node in a standardized way.
 
 To package a Solver-Service, participants must install the Celaut Node and structure the project according to the protocol requirements.
 
@@ -112,21 +113,12 @@ The project must contain a `.service` directory with the following files:
 | `service.json`     | Service metadata and interface definition |
 | `pack_config.json` | Packaging configuration                   |
 
-Example reference implementation:
+### Nodo Packer Guide
 
-[snake-game example repository](https://github.com/game-of-prompts/snake-game/?utm_source=chatgpt.com)
+The packaging guide for the Nodo packer is available here:
 
-### Example Project Structure
+* [Nodo Packer Guide](https://raw.githubusercontent.com/celaut-project/nodo/refs/heads/stable/src/commands/packer/zip_with_dockerfile/README.md)
 
-```text id="6v2lta"
-my-solver/
-├── .service/
-│   ├── Dockerfile
-│   ├── service.json
-│   └── pack_config.json
-├── solver.py
-└── requirements.txt
-```
 
 ## 7. Acquiring a Game-Service
 
